@@ -54,7 +54,7 @@ jobs:
           docker tag back-end_apigateway:latest $DOCKER_USERNAME/apigateway:latest
           docker tag back-end_usermanagement:latest $DOCKER_USERNAME/usermanagement:latest
           docker push $DOCKER_USERNAME/apigateway:latest
-          docker push $DOCKER_USERNAME/usermanagement:latest
+          docker push $DOCKER_USERNAME/usermanagement:latest 
 # name: CI/CD Pipeline
 
 # on:
