@@ -3,7 +3,7 @@
 namespace UserManagement.Controllers
 {
     [ApiController]
-    [Route("api/[user]")]
+    [Route("api/user")]
     public class UserServiceController : ControllerBase
     {
         [HttpGet]
