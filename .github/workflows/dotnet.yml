@@ -49,6 +49,7 @@ jobs:
       - name: Build and Push Docker Images with Docker Compose
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          working-directory: Back-end
         run: |
           docker-compose build
           docker tag back-end_apigateway:latest $DOCKER_USERNAME/apigateway:latest
