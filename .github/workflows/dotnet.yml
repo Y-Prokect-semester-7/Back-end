@@ -30,21 +30,26 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x  # Ensure .NET is installed before building
+          dotnet-version: 8.0.x
 
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build
+      - name: Build .NET Projects
         run: dotnet build --no-restore
 
-      - name: Test
+      - name: Test .NET Projects
         run: dotnet test --no-build --verbosity normal
 
-      - name: Build and Push Docker Image
+      - name: Build and Push Docker Images with Docker Compose
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/my-app:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/my-app:latest
+          docker-compose build
+          docker tag back-end_apigateway:latest $DOCKER_USERNAME/apigateway:latest
+          docker tag back-end_usermanagement:latest $DOCKER_USERNAME/usermanagement:latest
+          docker push $DOCKER_USERNAME/apigateway:latest
+          docker push $DOCKER_USERNAME/usermanagement:latest
 # name: CI/CD Pipeline
 
 # on:
