@@ -17,19 +17,34 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        # run: echo "${{ secrets.dckr_pat_vbf_IxOXz6MdB4TwPXupWGRX760 }}" | docker login -u "${{ secrets.cedje }}" --password-stdin 
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]; then
+            echo "Missing Docker credentials!"
+            exit 1
+          fi
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x  # Ensure .NET is installed before building
+
+      - name: Restore dependencies
+        run: dotnet restore
 
       - name: Build
         run: dotnet build --no-restore
+
       - name: Test
         run: dotnet test --no-build --verbosity normal
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t my-app:latest .
-          docker tag my-app:latest my-dockerhub-username/my-app:latest
-          docker push my-dockerhub-username/my-app:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/my-app:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/my-app:latest
 # name: CI/CD Pipeline
 
 # on:
