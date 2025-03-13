@@ -20,6 +20,11 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.dckr_pat_vbf_IxOXz6MdB4TwPXupWGRX760 }}" | docker login -u "${{ secrets.cedje }}" --password-stdin
 
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+
       - name: Build and Push Docker Image
         run: |
           docker build -t my-app:latest .
