@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -45,6 +47,9 @@ jobs:
 
       - name: Test .NET Projects
         run: dotnet test --no-build --verbosity normal
+      - name: Debug - List root files
+        run: ls -la
+
 
       - name: Set correct working directory
         run: cd Back-end && ls -R
