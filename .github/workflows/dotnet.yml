@@ -99,9 +99,11 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t my-app:latest .
-          docker tag my-app:latest ${{ secrets.DOCKER_USERNAME }}/my-app:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/my-app:latest
+          docker-compose build
+          docker tag back-end_apigateway:latest $DOCKER_USERNAME/apigateway:latest
+          docker tag back-end_usermanagement:latest $DOCKER_USERNAME/usermanagement:latest
+          docker push $DOCKER_USERNAME/apigateway:latest
+          docker push $DOCKER_USERNAME/usermanagement:latest
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
