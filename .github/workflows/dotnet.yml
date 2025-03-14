@@ -95,18 +95,27 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]; then
-            echo "Missing Docker credentials!"
+            echo "🚨 ERROR: Missing Docker credentials!"
             exit 1
           fi
           echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-      - name: Build and Push Docker Image
+      - name: Build and Push API Gateway Docker Image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
-          docker-compose build
-          docker tag back-end_apigateway:latest $DOCKER_USERNAME/apigateway:latest
-          docker tag back-end_usermanagement:latest $DOCKER_USERNAME/usermanagement:latest
+          cd APIGateway  # ✅ Navigate to APIGateway directory
+          docker build -t $DOCKER_USERNAME/apigateway:latest .
           docker push $DOCKER_USERNAME/apigateway:latest
+
+      - name: Build and Push User Management Docker Image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          cd UserManagement  # ✅ Navigate to UserManagement directory
+          docker build -t $DOCKER_USERNAME/usermanagement:latest .
           docker push $DOCKER_USERNAME/usermanagement:latest
+
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
