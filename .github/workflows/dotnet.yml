@@ -46,6 +46,9 @@ jobs:
       - name: Test .NET Projects
         run: dotnet test --no-build --verbosity normal
 
+      - name: Set correct working directory
+        run: cd Back-end && ls -R
+
       - name: Build and Push Docker Images with Docker Compose
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
