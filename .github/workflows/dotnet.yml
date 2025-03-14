@@ -100,6 +100,10 @@ jobs:
           fi
           echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
+      - name: Verify Docker Hub Login
+        run: docker info
+
+
       - name: Build and Push API Gateway Docker Image
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
