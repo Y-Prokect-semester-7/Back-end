@@ -4,7 +4,6 @@ services:
   apigateway:
     build:
     #  context: ./ApiGateway  # ✅ Fix build context to match your project structure
-      context: ../../portainer_data/_data/SOME_NAME/MY_APP/APIGateway
       dockerfile: Dockerfile  # ✅ Make sure this is the correct Dockerfile name
     ports:
       - "5000:80"
@@ -16,7 +15,6 @@ services:
   usermanagement:
     build:
      # context: ./UserManagement  # ✅ Fix build context to match your project structure
-      context: ../../portainer_data/_data/SOME_NAME/MY_APP/UserManagement
       dockerfile: Dockerfile      # ✅ Ensure this points to the correct Dockerfile
     ports:
       - "5001:80"

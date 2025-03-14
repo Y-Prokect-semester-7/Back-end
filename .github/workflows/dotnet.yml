@@ -23,10 +23,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Install Docker Compose
+      - name: Install Docker
         run: |
           sudo apt-get update
-          sudo apt-get install -y docker-compose
+          sudo apt-get install -y docker.io
 
       - name: Log in to Docker Hub
         env:
@@ -34,7 +34,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]; then
-            echo "Missing Docker credentials!"
+            echo "🚨 ERROR: Missing Docker credentials!"
             exit 1
           fi
           echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
@@ -53,22 +53,20 @@ jobs:
       - name: Test .NET Projects
         run: dotnet test --no-build --verbosity normal
 
-      - name: Move Dockerfiles to Portainer Volume
-        run: |
-          sudo mkdir -p /docker/volumes/portainer_data/_data/SOME_NAME/MY_APP/APIGateway
-          sudo mkdir -p /docker/volumes/portainer_data/_data/SOME_NAME/MY_APP/UserManagement
-          sudo cp APIGateway/Dockerfile /docker/volumes/portainer_data/_data/SOME_NAME/MY_APP/APIGateway/Dockerfile
-          sudo cp UserManagement/Dockerfile /docker/volumes/portainer_data/_data/SOME_NAME/MY_APP/UserManagement/Dockerfile
-          ls -R /docker/volumes/portainer_data/_data/SOME_NAME/MY_APP/
-
-      - name: Build and Push Docker Images with Docker Compose
+      - name: Build and Push API Gateway Docker Image
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
-          docker-compose build
-          docker tag back-end_apigateway:latest $DOCKER_USERNAME/apigateway:latest
-          docker tag back-end_usermanagement:latest $DOCKER_USERNAME/usermanagement:latest
+          cd APIGateway  # ✅ Navigate to APIGateway directory
+          docker build -t $DOCKER_USERNAME/apigateway:latest .
           docker push $DOCKER_USERNAME/apigateway:latest
+
+      - name: Build and Push User Management Docker Image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          cd UserManagement  # ✅ Navigate to UserManagement directory
+          docker build -t $DOCKER_USERNAME/usermanagement:latest .
           docker push $DOCKER_USERNAME/usermanagement:latest
 
 
