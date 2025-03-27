@@ -11,6 +11,18 @@
       ],
       "UpstreamPathTemplate": "/user",
       "UpstreamHttpMethod": [ "Get" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/tweetserver",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "tweetmanagement",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/tweet",
+      "UpstreamHttpMethod": [ "Post", "Options", "Get" ]
     }
   ],
   "GlobalConfiguration": {

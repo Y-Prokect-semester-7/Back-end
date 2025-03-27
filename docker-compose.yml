@@ -3,8 +3,8 @@
 services:
   apigateway:
     build:
-    #  context: ./ApiGateway  # ✅ Fix build context to match your project structure
-      dockerfile: Dockerfile  # ✅ Make sure this is the correct Dockerfile name
+      context: ./ApiGateway 
+      dockerfile: Dockerfile
     ports:
       - "5000:80"
     depends_on:
@@ -14,10 +14,18 @@ services:
 
   usermanagement:
     build:
-     # context: ./UserManagement  # ✅ Fix build context to match your project structure
-      dockerfile: Dockerfile      # ✅ Ensure this points to the correct Dockerfile
+      context: ./UserManagement  
+      dockerfile: Dockerfile    
     ports:
       - "5001:80"
+    networks:
+      - backend
+  tweetmanagement:
+    build:
+      context: ./TweetManagement  
+      dockerfile: Dockerfile    
+    ports:
+      - "5002:80"
     networks:
       - backend
 

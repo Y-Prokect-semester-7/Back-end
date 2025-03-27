@@ -1,2 +1,51 @@
 docker-compose down
 docker-compose up --build
+
+minikube:
+start:
+minikube start
+	
+start services 
+kubectl apply -f usermanagement-deployment.yaml
+kubectl apply -f apigateway-deployment.yaml
+kubectl apply -f ingress.yaml
+
+delete services
+kubectl delete -f usermanagement-deployment.yaml
+kubectl delete -f apigateway-deployment.yaml
+kubectl delete -f ingress.yaml
+
+minikube stop
+minikube delete
+
+check minikube status
+minikube status
+
+check minikube ip
+minikube ip
+
+check pods
+kubectl get pods
+
+Action	Command / URL
+Check running pods	kubectl get pods
+Check running services	kubectl get services
+Test API Gateway in browser	http://192.168.49.2/
+Test User Management API	http://192.168.49.2/api/users
+Test API with curl	curl -X GET http://192.168.49.2/api/users
+Check logs for errors	kubectl logs -l app=apigateway
+
+$Env:DOCKER_TLS_VERIFY = "1"
+$Env:DOCKER_HOST = "tcp://127.0.0.1:27884"
+$Env:DOCKER_CERT_PATH = "C:\Users\Cédric\.minikube\certs"
+$Env:MINIKUBE_ACTIVE_DOCKERD = "minikube"
+
+docker images
+docker build -t apigateway-service ./ApiGateway
+docker build -t usermanagement-service ./UserManagement
+
+ minikube service apigateway-service --url
+
+ 8AYMMJ1FNGHCS5KC8MBSJL5L
+
+ db: cDfxBUOPUDMHqEx6

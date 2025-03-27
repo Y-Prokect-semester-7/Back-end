@@ -1,0 +1,50 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using TweetManagement.Models;
+using TweetManagement.Repositories;
+
+namespace TweetManagement.Controllers
+{
+    [ApiController]
+    [Route("api/tweetserver")]
+    public class TweetServerController : ControllerBase
+    {
+        private readonly ITweetRepository _tweetRepository;
+
+        public TweetServerController(ITweetRepository tweetRepository)
+        {
+            _tweetRepository = tweetRepository;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateTweet([FromBody] TweetRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _tweetRepository.AddTweetAsync(request);
+            return Ok(new { status = "Tweet stored in MongoDB" });
+        }
+
+        //[HttpPost]
+        //public IActionResult CreateTweet([FromBody] TweetRequest request)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        Console.WriteLine("Model validation failed:");
+        //        foreach (var entry in ModelState)
+        //        {
+        //            foreach (var error in entry.Value.Errors)
+        //            {
+        //                Console.WriteLine($" {entry.Key}: {error.ErrorMessage}");
+        //            }
+        //        }
+
+        //        return BadRequest(ModelState);
+        //    }
+
+        //    return Ok(new { status = "Tweet accepted" });
+        //}
+    }
+}

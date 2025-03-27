@@ -9,7 +9,7 @@ namespace UserManagement.Controllers
         [HttpGet]
         public IActionResult GetUsers()
         {
-            var users = new List<string> { "User1", "User2" };
+            var users = new List<string> { "Jan", "User2" };
             return Ok(users);
         }
     }

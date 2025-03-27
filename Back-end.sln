@@ -15,6 +15,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{8EC462
 		docker.txt = docker.txt
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8s", "K8s", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		apigateway-deployment.yaml = apigateway-deployment.yaml
+		ingress.yaml = ingress.yaml
+		microservice-deployment.yaml = microservice-deployment.yaml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TweetManagement", "TweetManagement\TweetManagement.csproj", "{2874664D-F1A9-4E5E-B5A8-3E56AFA9044D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,12 +38,17 @@ Global
 		{ECCEFD24-58DC-4DCC-B27B-F5567F7F2773}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECCEFD24-58DC-4DCC-B27B-F5567F7F2773}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECCEFD24-58DC-4DCC-B27B-F5567F7F2773}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2874664D-F1A9-4E5E-B5A8-3E56AFA9044D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2874664D-F1A9-4E5E-B5A8-3E56AFA9044D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2874664D-F1A9-4E5E-B5A8-3E56AFA9044D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2874664D-F1A9-4E5E-B5A8-3E56AFA9044D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{ECCEFD24-58DC-4DCC-B27B-F5567F7F2773} = {2524A4D1-AC88-481E-9CB5-32BB86F77C30}
+		{2874664D-F1A9-4E5E-B5A8-3E56AFA9044D} = {2524A4D1-AC88-481E-9CB5-32BB86F77C30}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {454351DA-8C37-4E16-9BC3-DDCADB99869A}
