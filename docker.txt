@@ -27,7 +27,7 @@ minikube ip
 check pods
 kubectl get pods
 
-Action	Command / URL
+Action	Command / URL 
 Check running pods	kubectl get pods
 Check running services	kubectl get services
 Test API Gateway in browser	http://192.168.49.2/
