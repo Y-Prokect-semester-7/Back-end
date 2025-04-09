@@ -10,7 +10,7 @@
         }
       ],
       "UpstreamPathTemplate": "/user",
-      "UpstreamHttpMethod": [ "Get" ]
+      "UpstreamHttpMethod": [ "GET" ]
     },
     {
       "DownstreamPathTemplate": "/api/tweetserver",
@@ -22,10 +22,22 @@
         }
       ],
       "UpstreamPathTemplate": "/tweet",
-      "UpstreamHttpMethod": [ "Post", "Options", "Get" ]
+      "UpstreamHttpMethod": [ "POST", "OPTIONS", "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/tweets/user/{userId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "tweetmanagement",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/tweet/user/{userId}",
+      "UpstreamHttpMethod": [ "GET" ]
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://apigateway"
+    "BaseUrl": "http://localhost:5000"
   }
 }

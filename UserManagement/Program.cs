@@ -1,6 +1,21 @@
+using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using UserManagement.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.Authority = "https://dev-2zn6n2l3.us.auth0.com";
+        options.Audience = "https://dev-2zn6n2l3.us.auth0.com/api/v2/"; // Your API Identifier from Auth0
+    });
+
+builder.Services.AddAuthorization();
 
 // Add services to the container.
 
@@ -17,18 +32,21 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-        policy =>
-        {
-            policy.WithOrigins("*") // your Vue dev server
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
-});
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 builder.Services.AddControllers();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("_myAllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
@@ -45,7 +63,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 app.UseCors("_myAllowSpecificOrigins");
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

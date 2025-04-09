@@ -1,4 +1,5 @@
-﻿using Ocelot.DependencyInjection;
+﻿using Microsoft.AspNetCore.Authorization;
+using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,25 +8,37 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 // Add services to the container.
 
-builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
-
-builder.Services.AddOcelot();
-
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins("*") // your Vue dev server
+            policy.WithOrigins("http://localhost:5173") // your Vue dev server
                   .AllowAnyHeader()
-                  .AllowAnyMethod();
+                  .AllowAnyMethod()
+                  .AllowCredentials();
         });
 });
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
+
+builder.Services.AddOcelot();
+
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.Authority = "https://dev-2zn6n2l3.us.auth0.com";
+        options.Audience = "https://dev-2zn6n2l3.us.auth0.com/api/v2/"; // Your API Identifier from Auth0
+    });
+
+builder.Services.AddAuthorization();
+
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -33,8 +46,12 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
     });
 var app = builder.Build();
+app.UseCors("_myAllowSpecificOrigins"); 
+app.UseAuthentication();
+app.UseAuthorization();
 
-app.UseOcelot().Wait();
+app.MapGet("/secure-data", [Authorize] () => "This is protected")
+   .WithName("SecureData");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -46,10 +63,12 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
-app.UseCors("_myAllowSpecificOrigins");
+
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseOcelot().Wait();
 
 app.Run();
