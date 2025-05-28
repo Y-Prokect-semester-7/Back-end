@@ -13,8 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Restore dependencies
-        run: dotnet restore
+      # - name: Restore dependencies
+      #   run: dotnet restore
+      - name: Restore dependencies (only needed projects)
+        run: dotnet restore ./KafkaTweetConsumer/KafkaTweetConsumer.csproj.nuget.dgspecs
+
 
       - name: Build
         run: dotnet build --no-restore
