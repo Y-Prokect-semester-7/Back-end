@@ -42,7 +42,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("_myAllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins("http://localhost:5173", "https://gentle-stone-0c0a46303.6.azurestaticapps.net")
               .AllowAnyMethod()
               .AllowAnyHeader();
     });

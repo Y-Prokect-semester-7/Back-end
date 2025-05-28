@@ -2,11 +2,11 @@
   "Routes": [
     {
       "DownstreamPathTemplate": "/api/user",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "usermanagement",
-          "Port": 80
+          "Host": "usermanagement20250514-ajdshqbgd5btenhu.canadacentral-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/user",
@@ -14,23 +14,36 @@
     },
     {
       "DownstreamPathTemplate": "/api/tweetserver",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "tweetmanagement",
-          "Port": 80
+          "Host": "tweetmanagement20250514-h8eehpd4dvgfezeb.westeurope-01.azurewebsites.net",
+          "Port": 443
         }
       ],
+      //"RateLimitOptions": {
+      //  "ClientWhitelist": [],
+      //  "EnableRateLimiting": true,
+      //  "Period": "1m",
+      //  "PeriodTimespan": 60,
+      //  "Limit": 100,
+      //  "HttpStatusCode": 429,
+      //  "QuotaExceededMessage": "Too many requests. Please wait."
+      //},
       "UpstreamPathTemplate": "/tweet",
       "UpstreamHttpMethod": [ "POST", "OPTIONS", "GET" ]
     },
     {
       "DownstreamPathTemplate": "/api/tweets/user/{userId}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
+        //{
+        //  "Host": "tweetmanagement",
+        //  "Port": 80
+        //}
         {
-          "Host": "tweetmanagement",
-          "Port": 80
+          "Host": "tweetmanagement20250514-h8eehpd4dvgfezeb.westeurope-01.azurewebsites.net",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/tweet/user/{userId}",
@@ -38,6 +51,6 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:5000"
+    "BaseUrl": "https://twitterclone-avewc3b9bnbyaxfk.westeurope-01.azurewebsites.net"
   }
 }

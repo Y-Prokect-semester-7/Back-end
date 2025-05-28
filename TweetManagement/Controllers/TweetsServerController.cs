@@ -13,9 +13,12 @@ namespace TweetManagement.Controllers
     {
         private readonly ITweetRepository _tweetRepository;
 
-        public TweetsServerController(ITweetRepository tweetRepository)
+        private readonly ILogger<TweetsServerController> _logger;
+
+        public TweetsServerController(ITweetRepository tweetRepository, ILogger<TweetsServerController> logger)
         {
             _tweetRepository = tweetRepository;
+            _logger = logger;
         }
 
         // GET: api/tweets/user/{userId}
@@ -23,24 +26,33 @@ namespace TweetManagement.Controllers
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<List<TweetResponse>>> GetTweetsByUserAsync(string userId)
         {
-            var tweets = await _tweetRepository.GetTweetsAsync(userId);
-
-            if (tweets == null || !tweets.Any())
+            try
             {
-                return NotFound("No tweets found for this user.");
+                var tweets = await _tweetRepository.GetTweetsAsync(userId);
+
+                if (tweets == null || !tweets.Any())
+                {
+                    return NotFound("No tweets found for this user.");
+                }
+
+
+                // Convert to TweetResponse format
+                var response = tweets.Select(tweet => new TweetResponse
+                {
+                    UserId = Guid.TryParse(tweet.UserId, out var guid) ? guid : Guid.Empty,
+                    Content = tweet.Content,
+                    MediaUrl = tweet.MediaUrl,
+                    Timestamp = tweet.Timestamp,
+                    Visibility = tweet.Visibility ? "Public" : "Private"
+                }).ToList();
+
+                return Ok(response);
             }
-
-            // Convert to TweetResponse format
-            var response = tweets.Select(tweet => new TweetResponse
+            catch (Exception ex)
             {
-                UserId = Guid.TryParse(tweet.UserId, out var guid) ? guid : Guid.Empty,
-                Content = tweet.Content,
-                MediaUrl = tweet.MediaUrl,
-                Timestamp = tweet.Timestamp,
-                Visibility = tweet.Visibility ? "Public" : "Private"
-            }).ToList();
-
-            return Ok(response);
+                _logger.LogError(ex, "Failed to get tweets for user {UserId}", userId);
+                return StatusCode(500, "An unexpected error occurred. Please try again later.");
+            }
         }
     }
 }

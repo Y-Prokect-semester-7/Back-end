@@ -2,50 +2,99 @@ docker-compose down
 docker-compose up --build
 
 minikube:
-start:
-minikube start
-	
-start services 
-kubectl apply -f usermanagement-deployment.yaml
-kubectl apply -f apigateway-deployment.yaml
-kubectl apply -f ingress.yaml
-
-delete services
-kubectl delete -f usermanagement-deployment.yaml
-kubectl delete -f apigateway-deployment.yaml
-kubectl delete -f ingress.yaml
-
 minikube stop
 minikube delete
+start:
+minikube start --driver=docker --image-repository=registry.k8s.io --memory=4000 --cpus=2
 
-check minikube status
-minikube status
 
-check minikube ip
-minikube ip
+$env:MINIKUBE_HOME = "C:\MinikubeHome"
 
-check pods
-kubectl get pods
+minikube start --driver=hyperv / minikube start --driver=docker --memory=4000 --cpus=2 --image-mirror-country=nl
 
-Action	Command / URL 
-Check running pods	kubectl get pods
-Check running services	kubectl get services
-Test API Gateway in browser	http://192.168.49.2/
-Test User Management API	http://192.168.49.2/api/users
-Test API with curl	curl -X GET http://192.168.49.2/api/users
-Check logs for errors	kubectl logs -l app=apigateway
+minikube addons enable ingress --alsologtostderr -v=7
 
-$Env:DOCKER_TLS_VERIFY = "1"
-$Env:DOCKER_HOST = "tcp://127.0.0.1:27884"
-$Env:DOCKER_CERT_PATH = "C:\Users\Cédric\.minikube\certs"
-$Env:MINIKUBE_ACTIVE_DOCKERD = "minikube"
+//& minikube docker-env --shell powershell | Invoke-Expression
 
-docker images
-docker build -t apigateway-service ./ApiGateway
-docker build -t usermanagement-service ./UserManagement
 
- minikube service apigateway-service --url
+docker build -t apigateway:latest ./ApiGateway
+docker build -t usermanagement:latest ./UserManagement
+docker build -t tweetmanagement:latest ./TweetManagement
+docker build -t analytics-service:latest ./AnalyticsService
+
+kubectl apply -f apigateway-deployment.yaml
+kubectl apply -f usermanagement-deployment.yaml
+kubectl apply -f tweetmanagement-deployment.yaml
+kubectl apply -f analytics-deployment.yaml
+kubectl apply -f ingress.yaml
+kubectl apply -f prometheus-config.yaml
+kubectl apply -f prometheus-deployment.yaml
+kubectl apply -f grafana-deployment.yaml
+kubectl apply -f zookeeper-deployment.yaml
+kubectl apply -f kafka-deployment.yaml
+kubectl apply -f bitnami-kafka.yaml
+
+
+
+minikube tunnel
+kubectl port-forward svc/apigateway 8888:80
+
+
+want to build in minikube:
+& minikube docker-env --shell powershell | Invoke-Expression
+
+want to build in docker:
+& minikube docker-env --unset --shell powershell | Invoke-Expression
+
+
+if pods dont run 
+minikube image load apigateway:latest
+minikube image load usermanagement:latest
+minikube image load tweetmanagement:latest
+minikube image load analytics-service:latest
+
+kubectl rollout restart deployment apigateway
+kubectl rollout restart deployment usermanagement
+kubectl rollout restart deployment tweetmanagement
+kubectl rollout restart deployment analytics-service
+
+
 
  8AYMMJ1FNGHCS5KC8MBSJL5L
 
  db: cDfxBUOPUDMHqEx6
+
+ example updateting:
+ # Rebuild the Docker image
+docker build -t usermanagement:latest ./UserManagement
+
+# Load it into Minikube
+minikube image load usermanagement:latest
+
+# Restart the deployment to use the new image
+kubectl rollout restart deployment usermanagement
+
+kafka
+cd KafkaTweetConsumer
+dotnet run
+
+kafka minikube: 
+kubectl exec -it kafka-cli -- bash
+
+kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic tweets.posted --from-beginning
+kafka-topics.sh --bootstrap-server kafka:9092 --list
+
+azure:
+For API Gateway:
+docker build -t cedje/apigateway:latest .
+
+For User Management:
+docker build -t cedje/usermanagement:latest .
+
+docker build -t cedje/tweetmanagement:latest .
+
+docker push cedje/apigateway:latest
+docker push cedje/usermanagement:latest
+docker push cedje/tweetmanagement:latest
+
+https://tweetmanagement20250514-h8eehpd4dvgfezeb.scm.westeurope-01.azurewebsites.net/api/logstream

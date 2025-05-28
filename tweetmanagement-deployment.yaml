@@ -1,20 +1,20 @@
-﻿apiVersion: apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: apigateway
+  name: tweetmanagement
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: apigateway
+      app: tweetmanagement
   template:
     metadata:
       labels:
-        app: apigateway
+        app: tweetmanagement
     spec:
       containers:
-      - name: apigateway
-        image: apigateway:latest
+      - name: tweetmanagement
+        image: tweetmanagement:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 80
@@ -22,10 +22,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: apigateway
+  name: tweetmanagement
 spec:
   selector:
-    app: apigateway
+    app: tweetmanagement
   ports:
   - port: 80
     targetPort: 80

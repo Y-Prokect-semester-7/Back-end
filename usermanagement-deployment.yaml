@@ -1,20 +1,20 @@
-﻿apiVersion: apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: apigateway
+  name: usermanagement
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: apigateway
+      app: usermanagement
   template:
     metadata:
       labels:
-        app: apigateway
+        app: usermanagement
     spec:
       containers:
-      - name: apigateway
-        image: apigateway:latest
+      - name: usermanagement
+        image: usermanagement:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 80
@@ -22,10 +22,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: apigateway
+  name: usermanagement
 spec:
   selector:
-    app: apigateway
+    app: usermanagement
   ports:
   - port: 80
     targetPort: 80

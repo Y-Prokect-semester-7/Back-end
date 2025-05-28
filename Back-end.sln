@@ -13,16 +13,31 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{8EC462
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
 		docker.txt = docker.txt
+		prometheus.yml = prometheus.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8s", "K8s", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
+		analyticsservice-deployment.yaml = analyticsservice-deployment.yaml
 		apigateway-deployment.yaml = apigateway-deployment.yaml
+		bitnami-kafka.yaml = bitnami-kafka.yaml
+		grafana-deployment.yaml = grafana-deployment.yaml
 		ingress.yaml = ingress.yaml
-		microservice-deployment.yaml = microservice-deployment.yaml
+		kafka-deployment.yaml = kafka-deployment.yaml
+		prometheus-config.yaml = prometheus-config.yaml
+		prometheus-deployment.yaml = prometheus-deployment.yaml
+		tweetmanagement-deployment.yaml = tweetmanagement-deployment.yaml
+		usermanagement-deployment.yaml = usermanagement-deployment.yaml
+		zookeeper-deployment.yaml = zookeeper-deployment.yaml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TweetManagement", "TweetManagement\TweetManagement.csproj", "{2874664D-F1A9-4E5E-B5A8-3E56AFA9044D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyticsService", "AnalyticsService\AnalyticsService.csproj", "{89E9D4C9-965D-4B5C-8784-053CC8BD0876}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Tests", "Backend.Tests\Backend.Tests.csproj", "{7E83F57C-E03B-49D8-9EA8-72E914088C3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaTweetConsumer", "KafkaTweetConsumer\KafkaTweetConsumer.csproj", "{931AFE2E-1DFD-372B-8F01-9DBBB18B08D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +57,18 @@ Global
 		{2874664D-F1A9-4E5E-B5A8-3E56AFA9044D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2874664D-F1A9-4E5E-B5A8-3E56AFA9044D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2874664D-F1A9-4E5E-B5A8-3E56AFA9044D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89E9D4C9-965D-4B5C-8784-053CC8BD0876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89E9D4C9-965D-4B5C-8784-053CC8BD0876}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89E9D4C9-965D-4B5C-8784-053CC8BD0876}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89E9D4C9-965D-4B5C-8784-053CC8BD0876}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E83F57C-E03B-49D8-9EA8-72E914088C3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E83F57C-E03B-49D8-9EA8-72E914088C3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E83F57C-E03B-49D8-9EA8-72E914088C3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E83F57C-E03B-49D8-9EA8-72E914088C3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{931AFE2E-1DFD-372B-8F01-9DBBB18B08D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{931AFE2E-1DFD-372B-8F01-9DBBB18B08D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{931AFE2E-1DFD-372B-8F01-9DBBB18B08D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{931AFE2E-1DFD-372B-8F01-9DBBB18B08D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
