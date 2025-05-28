@@ -13,8 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # - name: Restore dependencies
-      #   run: dotnet restore
       - name: Restore dependencies
         run: |
             dotnet restore ./UserManagement/UserManagement.csproj
@@ -23,14 +21,14 @@ jobs:
             dotnet restore ./APIGateway/APIGateway.csproj
             dotnet restore ./Backend.Tests/Backend.Tests.csproj
 
-      - name: Build (only needed projects)
+      - name: Build ONLY needed projects
         run: |
             dotnet build ./UserManagement/UserManagement.csproj --no-restore
             dotnet build ./TweetManagement/TweetManagement.csproj --no-restore
             dotnet build ./AnalyticsService/AnalyticsService.csproj --no-restore
             dotnet build ./APIGateway/APIGateway.csproj --no-restore
-            # Optional: if you want to build the test project too
             dotnet build ./Backend.Tests/Backend.Tests.csproj --no-restore
+
 
 
 
