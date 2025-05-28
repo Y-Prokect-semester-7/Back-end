@@ -29,11 +29,6 @@ jobs:
             dotnet build ./APIGateway/APIGateway.csproj --no-restore
             dotnet build ./Backend.Tests/Backend.Tests.csproj --no-restore
 
-
-
-
-
-
       - name: Build
         run: dotnet build --no-restore
 
