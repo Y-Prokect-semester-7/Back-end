@@ -15,12 +15,15 @@ jobs:
 
       # - name: Restore dependencies
       #   run: dotnet restore
-      - name: Restore dependencies (only needed projects)
-        run: | 
-         dotnet restore ./TweetManagement/TweetManagement.csproj
-         dotnet restore ./APIGateway/APIGateway.csproj
-         dotnet restore ./UserManagement/UserManagement.csproj
-         dotnet restore ./AnalyticsService/AnalyticsService.csproj
+      - name: Build (only needed projects)
+        run: |
+            dotnet build ./UserManagement/UserManagement.csproj --no-restore
+            dotnet build ./TweetManagement/TweetManagement.csproj --no-restore
+            dotnet build ./AnalyticsService/AnalyticsService.csproj --no-restore
+            dotnet build ./APIGateway/APIGateway.csproj --no-restore
+            dotnet restore ./Backend.Tests/Backend.Tests.csproj
+
+
 
 
       - name: Build
