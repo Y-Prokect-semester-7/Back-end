@@ -2,9 +2,11 @@ name: Tweet Management CI/CD
 
 on:
   push:
-    branches: [ "master" ]
+    paths:
+      - 'Services/TweetManagement/**'
   pull_request:
-    branches: [ "master" ]
+    paths:
+      - 'Services/TweetManagement/**'
 
 jobs:
   build:
