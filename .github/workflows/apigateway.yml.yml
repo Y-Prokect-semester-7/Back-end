@@ -3,10 +3,10 @@ name: API Gateway CI/CD
 on:
   push:
     paths:
-      - 'APIGateway/**'
+      - 'api-gateway/**'
   pull_request:
     paths:
-      - 'APIGateway/**'
+      - 'api-gateway/**'
 
 jobs:
   build:

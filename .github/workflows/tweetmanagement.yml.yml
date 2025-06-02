@@ -3,10 +3,10 @@ name: Tweet Management CI/CD
 on:
   push:
     paths:
-      - 'Services/TweetManagement/**'
+      - 'Services/tweet-management-service/**'
   pull_request:
     paths:
-      - 'Services/TweetManagement/**'
+      - 'Services/tweet-management-service/**'
 
 jobs:
   build:
