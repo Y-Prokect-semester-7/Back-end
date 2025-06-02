@@ -2,9 +2,9 @@
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "developing" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "developing" ]
 
 jobs:
   build:
@@ -13,64 +13,56 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Restore dependencies
-        run: |
-            dotnet restore ./UserManagement/UserManagement.csproj
-            dotnet restore ./TweetManagement/TweetManagement.csproj
-            dotnet restore ./AnalyticsService/AnalyticsService.csproj
-            dotnet restore ./APIGateway/APIGateway.csproj
-            dotnet restore ./Backend.Tests/Backend.Tests.csproj
-
-      - name: Build ONLY needed projects
-        run: |
-            dotnet build ./UserManagement/UserManagement.csproj --no-restore
-            dotnet build ./TweetManagement/TweetManagement.csproj --no-restore
-            dotnet build ./AnalyticsService/AnalyticsService.csproj --no-restore
-            dotnet build ./APIGateway/APIGateway.csproj --no-restore
-            dotnet build ./Backend.Tests/Backend.Tests.csproj --no-restore
-
-      # - name: Build
-      #   run: dotnet build --no-restore
-      - name: Install .NET 6.0 runtime
+      - name: Install .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-           dotnet-version: '6.0.x'
+          dotnet-version: '6.0.x'
 
+      - name: Restore dependencies
+        run: |
+          dotnet restore ./UserManagement/UserManagement.csproj
+          dotnet restore ./TweetManagement/TweetManagement.csproj
+          dotnet restore ./AnalyticsService/AnalyticsService.csproj
+          dotnet restore ./APIGateway/APIGateway.csproj
+          dotnet restore ./Backend.Tests/Backend.Tests.csproj
 
-      - name: Test
+      - name: Build services
+        run: |
+          dotnet build ./UserManagement/UserManagement.csproj --no-restore
+          dotnet build ./TweetManagement/TweetManagement.csproj --no-restore
+          dotnet build ./AnalyticsService/AnalyticsService.csproj --no-restore
+          dotnet build ./APIGateway/APIGateway.csproj --no-restore
+          dotnet build ./Backend.Tests/Backend.Tests.csproj --no-restore
+
+      - name: Run Tests
         run: dotnet test --no-build --verbosity normal
+
+      - name: Run SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          projectBaseDir: .
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_PROJECT_KEY: your-org_or-name:your-project
+          SONAR_ORGANIZATION: your-org_or-name
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Log in to Docker Hub
+      - name: Login to Docker Hub
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+      - name: Build & Push API Gateway Image
         run: |
-          if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]; then
-            echo "🚨 ERROR: Missing Docker credentials!"
-            exit 1
-          fi
-          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+          cd APIGateway
+          docker build -t $DOCKER_USERNAME/apigateway:develop .
+          docker push $DOCKER_USERNAME/apigateway:develop
 
-      - name: Verify Docker Hub Login
-        run: docker info
-
-
-      - name: Build and Push API Gateway Docker Image
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      - name: Build & Push User Management Image
         run: |
-          cd APIGateway  # ✅ Navigate to APIGateway directory
-          docker build -t $DOCKER_USERNAME/apigateway:latest .
-          docker push $DOCKER_USERNAME/apigateway:latest
-
-      - name: Build and Push User Management Docker Image
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        run: |
-          cd UserManagement  # ✅ Navigate to UserManagement directory
-          docker build -t $DOCKER_USERNAME/usermanagement:latest .
-          docker push $DOCKER_USERNAME/usermanagement:latest
-
+          cd ../UserManagement
+          docker build -t $DOCKER_USERNAME/usermanagement:develop .
+          docker push $DOCKER_USERNAME/usermanagement:develop
