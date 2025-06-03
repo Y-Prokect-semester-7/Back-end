@@ -2,9 +2,9 @@
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "developing" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "developing" ]
 
 jobs:
   build:
@@ -12,6 +12,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Setup .NET 6 SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+
 
       - name: Restore dependencies
         run: |
@@ -29,48 +35,39 @@ jobs:
             dotnet build ./APIGateway/APIGateway.csproj --no-restore
             dotnet build ./Backend.Tests/Backend.Tests.csproj --no-restore
 
-      # - name: Build
-      #   run: dotnet build --no-restore
-      - name: Install .NET 6.0 runtime
-        uses: actions/setup-dotnet@v3
-        with:
-           dotnet-version: '6.0.x'
-
-
       - name: Test
         run: dotnet test --no-build --verbosity normal
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v2
 
-      - name: Log in to Docker Hub
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]; then
-            echo "🚨 ERROR: Missing Docker credentials!"
-            exit 1
-          fi
-          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      # - name: Log in to Docker Hub
+      #   env:
+      #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      #     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      #   run: |
+      #     if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]; then
+      #       echo "🚨 ERROR: Missing Docker credentials!"
+      #       exit 1
+      #     fi
+      #     echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-      - name: Verify Docker Hub Login
-        run: docker info
+      # - name: Verify Docker Hub Login
+      #   run: docker info
 
 
-      - name: Build and Push API Gateway Docker Image
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        run: |
-          cd APIGateway  # ✅ Navigate to APIGateway directory
-          docker build -t $DOCKER_USERNAME/apigateway:latest .
-          docker push $DOCKER_USERNAME/apigateway:latest
+      # - name: Build and Push API Gateway Docker Image
+      #   env:
+      #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      #   run: |
+      #     cd APIGateway  ✅ Navigate to APIGateway directory
+      #     docker build -t $DOCKER_USERNAME/apigateway:latest .
+      #     docker push $DOCKER_USERNAME/apigateway:latest
 
-      - name: Build and Push User Management Docker Image
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        run: |
-          cd UserManagement  # ✅ Navigate to UserManagement directory
-          docker build -t $DOCKER_USERNAME/usermanagement:latest .
-          docker push $DOCKER_USERNAME/usermanagement:latest
-
+      # - name: Build and Push User Management Docker Image
+      #   env:
+      #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      #   run: |
+      #     cd UserManagement  ✅ Navigate to UserManagement directory
+      #     docker build -t $DOCKER_USERNAME/usermanagement:latest .
+      #     docker push $DOCKER_USERNAME/usermanagement:latest

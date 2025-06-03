@@ -1,0 +1,62 @@
+﻿name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "developing" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET 6 SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]; then
+            echo "🚨 ERROR: Missing Docker credentials!"
+            exit 1
+          fi
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+      - name: Verify Docker Hub Login
+        run: docker info
+
+
+      - name: Build and Push API Gateway Docker Image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          cd APIGateway  # ✅ Navigate to APIGateway directory
+          docker build -t $DOCKER_USERNAME/apigateway:latest .
+          docker push $DOCKER_USERNAME/apigateway:latest
+
+      - name: Build and Push User Management Docker Image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          cd UserManagement  # ✅ Navigate to UserManagement directory
+          docker build -t $DOCKER_USERNAME/usermanagement:latest .
+          docker push $DOCKER_USERNAME/usermanagement:latest
+     
+      - name: Build and Push Tweet Management Docker Image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          cd TweetManagement  # ✅ Navigate to UserManagement directory
+          docker build -t $DOCKER_USERNAME/tweetmanagement:latest .
+          docker push $DOCKER_USERNAME/tweetmanagement:latest
