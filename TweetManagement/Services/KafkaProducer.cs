@@ -18,7 +18,7 @@
 //            await _producer.ProduceAsync(topic, new Message<Null, string> { Value = message });
 //        }
 //    }
-}
+//}
 using Backend.Tests.TweetManagement.Interfaces;
 using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
