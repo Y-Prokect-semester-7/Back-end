@@ -13,49 +13,45 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install .NET SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '6.0.x'
-
       - name: Restore dependencies
-        run: |
-          dotnet restore ./UserManagement/UserManagement.csproj
-          dotnet restore ./TweetManagement/TweetManagement.csproj
-          dotnet restore ./AnalyticsService/AnalyticsService.csproj
-          dotnet restore ./APIGateway/APIGateway.csproj
-          dotnet restore ./Backend.Tests/Backend.Tests.csproj
+        run: dotnet restore
 
-      - name: Build services
-        run: |
-          dotnet build ./UserManagement/UserManagement.csproj --no-restore
-          dotnet build ./TweetManagement/TweetManagement.csproj --no-restore
-          dotnet build ./AnalyticsService/AnalyticsService.csproj --no-restore
-          dotnet build ./APIGateway/APIGateway.csproj --no-restore
-          dotnet build ./Backend.Tests/Backend.Tests.csproj --no-restore
+      - name: Build
+        run: dotnet build --no-restore
 
-      - name: Run Tests
+      - name: Test
         run: dotnet test --no-build --verbosity normal
-
-    
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Login to Docker Hub
+      - name: Log in to Docker Hub
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-
-      - name: Build & Push API Gateway Image
         run: |
-          cd APIGateway
-          docker build -t $DOCKER_USERNAME/apigateway:develop .
-          docker push $DOCKER_USERNAME/apigateway:develop
+          if [[ -z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD" ]]; then
+            echo "🚨 ERROR: Missing Docker credentials!"
+            exit 1
+          fi
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-      - name: Build & Push User Management Image
+      - name: Verify Docker Hub Login
+        run: docker info
+
+
+      - name: Build and Push API Gateway Docker Image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
-          cd ../UserManagement
-          docker build -t $DOCKER_USERNAME/usermanagement:develop .
-          docker push $DOCKER_USERNAME/usermanagement:develop
+          cd APIGateway  # ✅ Navigate to APIGateway directory
+          docker build -t $DOCKER_USERNAME/apigateway:latest .
+          docker push $DOCKER_USERNAME/apigateway:latest
+
+      - name: Build and Push User Management Docker Image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          cd UserManagement  # ✅ Navigate to UserManagement directory
+          docker build -t $DOCKER_USERNAME/usermanagement:latest .
+          docker push $DOCKER_USERNAME/usermanagement:latest
