@@ -52,3 +52,11 @@ jobs:
           cd UserManagement  # ✅ Navigate to UserManagement directory
           docker build -t $DOCKER_USERNAME/usermanagement:latest .
           docker push $DOCKER_USERNAME/usermanagement:latest
+     
+      - name: Build and Push Tweet Management Docker Image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          cd TweetManagement  # ✅ Navigate to UserManagement directory
+          docker build -t $DOCKER_USERNAME/tweetmanagement:latest .
+          docker push $DOCKER_USERNAME/tweetmanagement:latest
