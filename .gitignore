@@ -367,5 +367,4 @@ appsettings.Development.json
 appsettings.Local.json
 
 # Ignore sensitive config files
-appsettings.json
-appsettings.Development.json
+**/appsettings.json
