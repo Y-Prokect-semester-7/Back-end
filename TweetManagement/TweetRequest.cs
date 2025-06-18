@@ -10,9 +10,11 @@ namespace TweetManagement.Models
         [Required]
         public string Content { get; set; }
 
-        public string MediaUrl { get; set; }
+        public string? MediaUrl { get; set; }
 
         [Required]
         public bool Visibility { get; set; }
+
+        public IFormFile? Image { get; set; }
     }
 }

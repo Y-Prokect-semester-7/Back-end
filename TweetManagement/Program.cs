@@ -26,6 +26,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IKafkaProducer, KafkaProducer>();
+builder.Services.AddScoped<IBlobUploadService, BlobUploadService>();
+
 
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDbSettings"));

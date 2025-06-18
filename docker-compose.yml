@@ -41,7 +41,7 @@ services:
     image: grafana/grafana
     container_name: grafana
     ports:
-      - "3000:3000"
+      - "8088:3000"
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0

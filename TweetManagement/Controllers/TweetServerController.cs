@@ -20,158 +20,83 @@ namespace TweetManagement.Controllers
 
         private readonly IKafkaProducer _kafkaProducer;
 
-        public TweetServerController(ITweetRepository tweetRepository, ILogger<TweetServerController> logger, IKafkaProducer kafkaProducert)
+        private readonly IBlobUploadService _uploadService;
+
+        public TweetServerController(ITweetRepository tweetRepository, ILogger<TweetServerController> logger, IKafkaProducer kafkaProducert, IBlobUploadService uploadService)
         {
             _tweetRepository = tweetRepository;
             _logger = logger;
             _kafkaProducer = kafkaProducert;
+            _uploadService = uploadService;
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateTweet([FromBody] TweetRequest request)
+        public async Task<IActionResult> CreateTweet([FromForm] TweetRequest request)
         {
+            string? mediaUrl = null;
+            bool imageUploaded = false;
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
                 var userIdFromToken = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-                if (userIdFromToken == null || userIdFromToken != request.UserId)
-                {
-                    _logger.LogWarning("Unauthorized attempt by {UserId}", userIdFromToken);
+                if (userIdFromToken != request.UserId)
                     return Forbid();
-                }
 
                 if (string.IsNullOrWhiteSpace(request.Content) || request.Content.Length > 280)
-                {
                     return BadRequest("Invalid tweet content.");
-                }
 
-                if (request.Content.Contains("$") || request.Content.Contains("{") || request.Content.Contains("}"))
+                if (request.Image != null && request.Image.Length > 0)
                 {
-                    return BadRequest("Potentially unsafe content.");
+                    mediaUrl = await _uploadService.UploadImageAndGetSasUrlAsync(request.Image);
+                    imageUploaded = true;
+                    _logger.LogInformation("Image uploaded to blob: {mediaUrl}", mediaUrl);
                 }
 
-                await _tweetRepository.AddTweetAsync(request);
+                var tweet = new TweetRequest
+                {
+                    UserId = request.UserId,
+                    Content = request.Content,
+                    MediaUrl = mediaUrl,
+                    Visibility = request.Visibility
+                };
+
+                await _tweetRepository.AddTweetAsync(tweet);
+                _logger.LogInformation("Tweet saved to database");
 
                 var kafkaEvent = JsonSerializer.Serialize(new
                 {
-                    userId = request.UserId,
-                    content = request.Content,
+                    userId = tweet.UserId,
+                    content = tweet.Content,
+                    mediaUrl = tweet.MediaUrl,
                     timestamp = DateTime.UtcNow
                 });
 
-                _logger.LogInformation("Preparing to send Kafka message: {Event}", kafkaEvent);
-
+                //await _kafkaProducer.PublishAsync("tweets.posted", kafkaEvent);
                 await _kafkaProducer.PublishAsync("tweets.posted", kafkaEvent);
+                _logger.LogInformation("Kafka event published");
 
-                _logger.LogInformation("Kafka message successfully sent to topic 'tweets.posted'");
-
-                return Ok(new
-                {
-                    status = "Tweet stored in MongoDB",
-                    userId = request.UserId,
-                    content = request.Content,
-                    timestamp = DateTime.UtcNow
-                });
+                return Ok(new { status = "Tweet created", tweet });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to create tweet");
-                return StatusCode(500, "An unexpected error occurred. Please try again later.");
+                _logger.LogError(ex, "Tweet creation failed");
+
+                if (imageUploaded && mediaUrl != null)
+                {
+                    try
+                    {
+                        await _uploadService.DeleteImageAsync(mediaUrl);
+                        _logger.LogWarning("Image rolled back (deleted from blob): {mediaUrl}", mediaUrl);
+                    }
+                    catch (Exception deleteEx)
+                    {
+                        _logger.LogError(deleteEx, "Failed to delete image from blob after failure");
+                    }
+                }
+
+                return StatusCode(500, "Something went wrong while creating tweet");
             }
         }
     }
 }
 
-//using Confluent.Kafka;
-//using Microsoft.AspNetCore.Authorization;
-//using Microsoft.AspNetCore.Mvc;
-//using System.Security.Claims;
-//using System.Text.Json;
-//using TweetManagement.Models;
-//using TweetManagement.Repositories;
-//using static System.Net.Mime.MediaTypeNames;
-//using TweetManagement.Models;
-
-
-//namespace TweetManagement.Controllers
-//{
-//    [ApiController]
-//    [Route("api/tweetserver")]
-//    public class TweetServerController : ControllerBase
-//    {
-//        private readonly ITweetRepository _tweetRepository;
-
-//        private readonly ILogger<TweetServerController> _logger;
-
-//        public TweetServerController(ITweetRepository tweetRepository, ILogger<TweetServerController> logger)
-//        {
-//            _tweetRepository = tweetRepository;
-//            _logger = logger;
-//        }
-
-//        [Authorize]
-//        [HttpPost]
-//        public async Task<IActionResult> CreateTweet([FromBody] TweetRequest request)
-//        {
-//            try
-//            {
-//                if (!ModelState.IsValid)
-//                {
-//                    return BadRequest(ModelState);
-//                }
-
-//                var userIdFromToken = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-//                if (userIdFromToken == null || userIdFromToken != request.UserId)
-//                {
-//                    _logger.LogWarning("Unauthorized attempt by {UserId}", userIdFromToken);
-//                    return Forbid();
-//                }
-
-//                if (string.IsNullOrWhiteSpace(request.Content) || request.Content.Length > 280)
-//                {
-//                    return BadRequest("Invalid tweet content.");
-//                }
-
-//                if (request.Content.Contains("$") || request.Content.Contains("{") || request.Content.Contains("}"))
-//                {
-//                    return BadRequest("Potentially unsafe content.");
-//                }
-
-//                await _tweetRepository.AddTweetAsync(request);
-
-//                var config = new ProducerConfig { BootstrapServers = "kafka:9092" };
-
-//                using var producer = new ProducerBuilder<Null, string>(config).Build();
-
-//                var kafkaEvent = JsonSerializer.Serialize(new
-//                {
-//                    userId = request.UserId,
-//                    content = request.Content,
-//                    timestamp = DateTime.UtcNow
-//                });
-
-//                await producer.ProduceAsync("tweets.posted", new Message<Null, string> { Value = kafkaEvent });
-
-//                return Ok(new
-//                {
-//                    status = "Tweet stored in MongoDB",
-//                    userId = request.UserId,
-//                    content = request.Content,
-//                    timestamp = DateTime.UtcNow
-//                });
-//            }
-//            catch (Exception ex)
-//            {
-//                _logger.LogError(ex, "Failed to create tweet");
-//                return StatusCode(500, "An unexpected error occurred. Please try again later.");
-//            }
-//        }
-//    }
-//}

@@ -39,6 +39,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Tests", "Backend.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaTweetConsumer", "KafkaTweetConsumer\KafkaTweetConsumer.csproj", "{931AFE2E-1DFD-372B-8F01-9DBBB18B08D4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ServerlessFunctions", "ServerlessFunctions", "{CEB3F37A-0471-4E5E-BAA6-62A012CD3F1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TweetFunctions", "TweetFunctions\TweetFunctions.csproj", "{38FDB172-D43F-4D42-8278-90B342426834}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,10 @@ Global
 		{931AFE2E-1DFD-372B-8F01-9DBBB18B08D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{931AFE2E-1DFD-372B-8F01-9DBBB18B08D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{931AFE2E-1DFD-372B-8F01-9DBBB18B08D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38FDB172-D43F-4D42-8278-90B342426834}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38FDB172-D43F-4D42-8278-90B342426834}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38FDB172-D43F-4D42-8278-90B342426834}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38FDB172-D43F-4D42-8278-90B342426834}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +84,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{ECCEFD24-58DC-4DCC-B27B-F5567F7F2773} = {2524A4D1-AC88-481E-9CB5-32BB86F77C30}
 		{2874664D-F1A9-4E5E-B5A8-3E56AFA9044D} = {2524A4D1-AC88-481E-9CB5-32BB86F77C30}
+		{38FDB172-D43F-4D42-8278-90B342426834} = {CEB3F37A-0471-4E5E-BAA6-62A012CD3F1F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {454351DA-8C37-4E16-9BC3-DDCADB99869A}

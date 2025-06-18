@@ -1,20 +1,46 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/user",
-      "DownstreamScheme": "https",
+      "DownstreamPathTemplate": "/api/adduser",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "usermanagement20250514-ajdshqbgd5btenhu.canadacentral-01.azurewebsites.net",
           "Port": 443
         }
+        //{
+        //  "Host": "usermanagement",
+        //  "Port": 80
+        //}
       ],
-      "UpstreamPathTemplate": "/user",
+      "UpstreamPathTemplate": "/adduser",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/user/exists/{auth0Id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        //{
+        //  "Host": "usermanagement",
+        //  "Port": 80
+        //}
+        {
+          "Host": "usermanagement20250514-ajdshqbgd5btenhu.canadacentral-01.azurewebsites.net",
+          "Port": 443
+        }
+      ],
+      "UpstreamPathTemplate": "/user/exists/{auth0Id}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
       "DownstreamPathTemplate": "/api/tweetserver",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
+      //"DownstreamHostAndPorts": [
+      //  {
+      //    "Host": "tweetmanagement",
+      //    "Port": 80
+      //  }
+      //],
       "DownstreamHostAndPorts": [
         {
           "Host": "tweetmanagement20250514-h8eehpd4dvgfezeb.westeurope-01.azurewebsites.net",
@@ -34,8 +60,45 @@
       "UpstreamHttpMethod": [ "POST", "OPTIONS", "GET" ]
     },
     {
+      "DownstreamPathTemplate": "/api/upload",
+      "DownstreamScheme": "http",
+      //"DownstreamHostAndPorts": [
+      //  {
+      //    "Host": "tweetmanagement",
+      //    "Port": 80
+      //  }
+      //],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "tweetmanagement20250514-h8eehpd4dvgfezeb.westeurope-01.azurewebsites.net",
+          "Port": 443
+        }
+      ],
+      "UpstreamPathTemplate": "/uploadimage",
+      "UpstreamHttpMethod": [ "POST", "OPTIONS", "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/blobcode",
+      "DownstreamScheme": "http",
+      //"DownstreamHostAndPorts": [
+      //  {
+      //    "Host": "tweetmanagement",
+      //    "Port": 80
+      //  }
+      //],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "tweetmanagement20250514-h8eehpd4dvgfezeb.westeurope-01.azurewebsites.net",
+          "Port": 443
+        }
+      ],
+      "UpstreamPathTemplate": "/blobcode",
+      "UpstreamHttpMethod": [ "POST", "OPTIONS", "GET" ]
+    },
+    {
       "DownstreamPathTemplate": "/api/tweets/user/{userId}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
+      //"DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         //{
         //  "Host": "tweetmanagement",
