@@ -2,7 +2,7 @@
   "Routes": [
     {
       "DownstreamPathTemplate": "/api/adduser",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "usermanagement20250514-ajdshqbgd5btenhu.canadacentral-01.azurewebsites.net",
@@ -18,7 +18,7 @@
     },
     {
       "DownstreamPathTemplate": "/user/exists/{auth0Id}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         //{
         //  "Host": "usermanagement",
@@ -34,7 +34,7 @@
     },
     {
       "DownstreamPathTemplate": "/api/tweetserver",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       //"DownstreamHostAndPorts": [
       //  {
       //    "Host": "tweetmanagement",
@@ -61,7 +61,7 @@
     },
     {
       "DownstreamPathTemplate": "/api/upload",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       //"DownstreamHostAndPorts": [
       //  {
       //    "Host": "tweetmanagement",
@@ -79,7 +79,7 @@
     },
     {
       "DownstreamPathTemplate": "/api/blobcode",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       //"DownstreamHostAndPorts": [
       //  {
       //    "Host": "tweetmanagement",
@@ -97,7 +97,7 @@
     },
     {
       "DownstreamPathTemplate": "/api/tweets/user/{userId}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       //"DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         //{
