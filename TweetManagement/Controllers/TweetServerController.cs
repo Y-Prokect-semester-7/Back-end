@@ -39,6 +39,7 @@ namespace TweetManagement.Controllers
             try
             {
                 var userIdFromToken = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                _logger.LogInformation("User ID from token: {userId}", userIdFromToken);
                 if (userIdFromToken != request.UserId)
                     return Forbid();
 
