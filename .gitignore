@@ -365,3 +365,7 @@ FodyWeavers.xsd
 # Secrets
 appsettings.Development.json
 appsettings.Local.json
+
+# Ignore sensitive config files
+appsettings.json
+appsettings.Development.json
